@@ -28,7 +28,7 @@ jobs:
   check_build_trigger:
     name: Check build trigger
     runs-on: ubuntu-latest
-    if: github.repository == 'scikit-learn/scikit-learn'
+    if: true
     outputs:
       build: ${{ steps.check_build_trigger.outputs.build }}
 
@@ -205,6 +205,10 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11" # update once build dependencies are available
+      
+      - name: Install LLVM
+        if: ${{ matrix.platform_id == 'win_arm64' }}
+        run: choco install llvm -y
 
       - uses: conda-incubator/setup-miniconda@v3
         if: ${{ startsWith(matrix.platform_id, 'macosx') }}
@@ -222,7 +226,7 @@ jobs:
           # Needed on Windows CI to compile with Visual Studio compiler
           # otherwise Meson detects a MINGW64 platform and use MINGW64
           # toolchain
-          CIBW_CONFIG_SETTINGS_WINDOWS: "setup-args=--vsenv"
+          CIBW_CONFIG_SETTINGS_WINDOWS: ${{ matrix.platform_id == 'win_arm64' && '' || 'setup-args=--vsenv' }}
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: bash build_tools/github/repair_windows_wheels.sh {wheel} {dest_dir}
           CIBW_BEFORE_BUILD: bash {project}/build_tools/wheels/cibw_before_build.sh {project}
           CIBW_BEFORE_TEST_WINDOWS: bash build_tools/github/build_minimal_windows_image.sh ${{ matrix.python }} ${{matrix.platform_id}}

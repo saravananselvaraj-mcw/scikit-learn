@@ -12,5 +12,7 @@ pip install wheel
 wheel unpack "$WHEEL"
 WHEEL_DIRNAME=$(ls -d scikit_learn-*)
 python build_tools/github/vendor.py "$WHEEL_DIRNAME"
+LLVM_BIN="/c/Program Files/LLVM/bin"
+cp "$LLVM_BIN/libomp.dll" "$WHEEL_DIRNAME/sklearn/.libs/" || true
 wheel pack "$WHEEL_DIRNAME" -d "$DEST_DIR"
 rm -rf "$WHEEL_DIRNAME"

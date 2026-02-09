@@ -53,5 +53,16 @@ fi
 # in the pyproject.toml file, while the tests are run
 # against the most recent version of the dependencies
 
+if [[ "$RUNNER_OS" == "Windows" && "$CIBW_BUILD" == *"win_arm64"* ]]; then
+    echo "Configuring LLVM toolchain for Windows ARM64"
+
+    export CC=clang
+    export CXX=clang++
+
+    export CFLAGS="-O3 -funroll-loops"
+    export CXXFLAGS="-O3 -funroll-loops"
+fi
+
+
 python -m pip install cibuildwheel
 python -m cibuildwheel --output-dir wheelhouse
