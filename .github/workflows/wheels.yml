@@ -214,9 +214,8 @@ jobs:
         if: ${{ matrix.platform_id == 'win_arm64' }}
         shell: powershell
         run: |
-          $runtime = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "clang_rt.builtins-aarch64.lib" | Select-Object -First 1
+          $runtime = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "libomp.dll" | Select-Object -First 1
           Write-Host "Runtime found at:" $runtime.FullName
-          Copy-Item $runtime.FullName "C:\Program Files\LLVM\lib\clang\21\lib\windows\"
 
       - uses: conda-incubator/setup-miniconda@v3
         if: ${{ startsWith(matrix.platform_id, 'macosx') }}
