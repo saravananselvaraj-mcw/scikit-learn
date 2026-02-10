@@ -53,6 +53,16 @@ def make_distributor_init_64_bits(
                 )
             )
         )
+def copy_libomp_dll(target_folder):
+    """Copy libomp.dll from LLVM to target folder if found."""
+    llvm_path = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\Llvm\\ARM64\\bin\\libomp.dll"
+    if op.exists(llvm_path):
+        print(f"Copying {llvm_path} to {target_folder}.")
+        shutil.copy2(llvm_path, target_folder)
+        return True
+    
+    print("WARNING: libomp.dll not found in any expected LLVM location.")
+    return False
 
 
 def main(wheel_dirname):
@@ -81,6 +91,8 @@ def main(wheel_dirname):
 
     print(f"Copying {MSVCP140_SRC_PATH} to {target_folder}.")
     shutil.copy2(MSVCP140_SRC_PATH, target_folder)
+
+    copy_libomp_dll(target_folder)
 
     # Generate the _distributor_init file in the source tree
     print("Generating the '_distributor_init.py' file.")
