@@ -61,15 +61,24 @@ def make_distributor_init_64_bits(
                 )
             )
         )
-def copy_libomp_dll(target_folder):
-    """Copy libomp.dll from LLVM to target folder if found."""
+def copy_libomp_dll(target_folder, wheel_dirname):
+    """Copy libomp.dll from LLVM to target folder if found (ARM64 only)."""
+    # Only copy libomp.dll for ARM64 builds
+    # For AMD64, vcomp140.dll (MSVC OpenMP) is sufficient
+
+    cibw_build = os.environ.get("CIBW_BUILD", "")
+    print(f"CIBW_BUILD: {cibw_build}")
+    if "win_arm64" not in cibw_build.lower():
+        print("Skipping libomp.dll copy (not an ARM64 build).")
+        return False
+    
     llvm_path = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\Llvm\\ARM64\\bin\\libomp.dll"
     if op.exists(llvm_path):
         print(f"Copying {llvm_path} to {target_folder}.")
         shutil.copy2(llvm_path, target_folder)
         return True
     
-    print("WARNING: libomp.dll not found in any expected LLVM location.")
+    print("WARNING: libomp.dll not found for ARM64 build.")
     return False
 
 
@@ -100,7 +109,7 @@ def main(wheel_dirname):
     print(f"Copying {MSVCP140_SRC_PATH} to {target_folder}.")
     shutil.copy2(MSVCP140_SRC_PATH, target_folder)
 
-    libomp_copied = copy_libomp_dll(target_folder)
+    libomp_copied = copy_libomp_dll(target_folder, wheel_dirname)
     libomp_dll_filename = "libomp.dll" if libomp_copied else None
 
     # Generate the _distributor_init file in the source tree
@@ -111,7 +120,6 @@ def main(wheel_dirname):
         msvcp140_dll_filename,
         libomp_dll_filename,
     )
-
 
 if __name__ == "__main__":
     _, wheel_file = sys.argv
