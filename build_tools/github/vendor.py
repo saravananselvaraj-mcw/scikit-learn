@@ -71,13 +71,15 @@ def copy_libomp_dll(target_folder, wheel_dirname):
     if "win_arm64" not in cibw_build.lower():
         print("Skipping libomp.dll copy (not an ARM64 build).")
         return False
-    
-    llvm_path = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Tools\\Llvm\\ARM64\\bin\\libomp.dll"
+
+    llvm_path = op.join(
+    r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\ARM64\bin",
+    "libomp.dll",)
     if op.exists(llvm_path):
         print(f"Copying {llvm_path} to {target_folder}.")
         shutil.copy2(llvm_path, target_folder)
         return True
-    
+
     print("WARNING: libomp.dll not found for ARM64 build.")
     return False
 

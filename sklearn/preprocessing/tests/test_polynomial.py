@@ -1,3 +1,4 @@
+import platform
 import re
 import sys
 
@@ -7,7 +8,6 @@ from numpy.testing import assert_allclose, assert_array_equal
 from scipy import sparse
 from scipy.interpolate import BSpline
 from scipy.sparse import random as sparse_random
-import platform 
 
 from sklearn._config import config_context
 from sklearn.linear_model import LinearRegression
