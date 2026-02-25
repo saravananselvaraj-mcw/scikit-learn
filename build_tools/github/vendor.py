@@ -10,6 +10,10 @@ TARGET_FOLDER = op.join("sklearn", ".libs")
 DISTRIBUTOR_INIT = op.join("sklearn", "_distributor_init.py")
 VCOMP140_SRC_PATH = "C:\\Windows\\System32\\vcomp140.dll"
 MSVCP140_SRC_PATH = "C:\\Windows\\System32\\msvcp140.dll"
+LIBOMP_SRC_PATH = op.join(
+    r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\ARM64\bin",
+    "libomp.dll"
+)
 
 
 def make_distributor_init_64_bits(
@@ -63,21 +67,14 @@ def make_distributor_init_64_bits(
         )
 def copy_libomp_dll(target_folder, wheel_dirname):
     """Copy libomp.dll from LLVM to target folder if found (ARM64 only)."""
-    # Only copy libomp.dll for ARM64 builds
-    # For AMD64, vcomp140.dll (MSVC OpenMP) is sufficient
 
     cibw_build = os.environ.get("CIBW_BUILD", "")
-    print(f"CIBW_BUILD: {cibw_build}")
     if "win_arm64" not in cibw_build.lower():
-        print("Skipping libomp.dll copy (not an ARM64 build).")
         return False
 
-    llvm_path = op.join(
-    r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\ARM64\bin",
-    "libomp.dll",)
-    if op.exists(llvm_path):
-        print(f"Copying {llvm_path} to {target_folder}.")
-        shutil.copy2(llvm_path, target_folder)
+    if op.exists(LIBOMP_SRC_PATH):
+        print(f"Copying {LIBOMP_SRC_PATH} to {target_folder}.")
+        shutil.copy2(LIBOMP_SRC_PATH, target_folder)
         return True
 
     print("WARNING: libomp.dll not found for ARM64 build.")

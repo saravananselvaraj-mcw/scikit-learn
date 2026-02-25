@@ -12,6 +12,5 @@ pip install wheel
 wheel unpack "$WHEEL"
 WHEEL_DIRNAME=$(ls -d scikit_learn-*)
 python build_tools/github/vendor.py "$WHEEL_DIRNAME"
-ls -R "$WHEEL_DIRNAME/sklearn"
 wheel pack "$WHEEL_DIRNAME" -d "$DEST_DIR"
 rm -rf "$WHEEL_DIRNAME"
