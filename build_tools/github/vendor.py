@@ -12,7 +12,7 @@ VCOMP140_SRC_PATH = "C:\\Windows\\System32\\vcomp140.dll"
 MSVCP140_SRC_PATH = "C:\\Windows\\System32\\msvcp140.dll"
 LIBOMP_SRC_PATH = op.join(
     r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\ARM64\bin",
-    "libomp.dll"
+    "libomp.dll",
 )
 
 
@@ -29,9 +29,9 @@ def make_distributor_init_64_bits(
     """
     libomp_preload = ""
     if libomp_dll_filename:
-        libomp_preload = '''
+        libomp_preload = """
                 libomp_dll_filename = op.join(libs_path, "{0}")
-                WinDLL(op.abspath(libomp_dll_filename))'''.format(libomp_dll_filename)
+                WinDLL(op.abspath(libomp_dll_filename))""".format(libomp_dll_filename)
 
     with open(distributor_init, "wt") as f:
         f.write(
@@ -65,6 +65,8 @@ def make_distributor_init_64_bits(
                 )
             )
         )
+
+
 def copy_libomp_dll(target_folder, wheel_dirname):
     """Copy libomp.dll from LLVM to target folder if found (ARM64 only)."""
 
@@ -119,6 +121,7 @@ def main(wheel_dirname):
         msvcp140_dll_filename,
         libomp_dll_filename,
     )
+
 
 if __name__ == "__main__":
     _, wheel_file = sys.argv
