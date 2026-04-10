@@ -66,6 +66,17 @@ if [[ "$RUNNER_OS" == "Windows" && "$CIBW_BUILD" == *"win_arm64"* ]]; then
     export LDFLAGS="$LDFLAGS -L\"$CLANG_RT\" -lclang_rt.builtins-aarch64"
 fi
 
+if [[ "$RUNNER_OS" == "Windows" && "$CIBW_BUILD" == *"win_amd64"* ]]; then
+    echo "Configuring LLVM toolchain for Windows AMD64 (x86_64)"
+
+    export CC=clang-cl
+    export CXX=clang-cl  
+
+   
+    CLANG_RT="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/lib/clang/19/lib/windows"
+    export LDFLAGS="$LDFLAGS -L\"$CLANG_RT\" -lclang_rt.builtins-x86_64"
+fi
+
 
 python -m pip install cibuildwheel
 python -m cibuildwheel --output-dir wheelhouse

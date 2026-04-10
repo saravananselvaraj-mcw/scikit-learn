@@ -10,8 +10,12 @@ TARGET_FOLDER = op.join("sklearn", ".libs")
 DISTRIBUTOR_INIT = op.join("sklearn", "_distributor_init.py")
 VCOMP140_SRC_PATH = "C:\\Windows\\System32\\vcomp140.dll"
 MSVCP140_SRC_PATH = "C:\\Windows\\System32\\msvcp140.dll"
-LIBOMP_SRC_PATH = op.join(
+LIBOMP_SRC_PATH_ARM64 = op.join(
     r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\ARM64\bin",
+    "libomp.dll",
+)
+LIBOMP_SRC_PATH_AMD64 = op.join(
+    r"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin",
     "libomp.dll",
 )
 
@@ -68,18 +72,26 @@ def make_distributor_init_64_bits(
 
 
 def copy_libomp_dll(target_folder, wheel_dirname):
-    """Copy libomp.dll from LLVM to target folder if found (ARM64 only)."""
+   """Copy libomp.dll from LLVM to target folder for clang-cl builds."""
 
-    cibw_build = os.environ.get("CIBW_BUILD", "")
-    if "win_arm64" not in cibw_build.lower():
+    cibw_build = os.environ.get("CIBW_BUILD", "").lower()
+
+    if "win_arm64" in cibw_build:
+        libomp_src = LIBOMP_SRC_PATH_ARM64
+        arch_label = "ARM64"
+    elif "win_amd64" in cibw_build:
+        libomp_src = LIBOMP_SRC_PATH_AMD64
+        arch_label = "AMD64"
+    else:
+        # Not a Windows clang-cl build — skip
         return False
-
-    if op.exists(LIBOMP_SRC_PATH):
-        print(f"Copying {LIBOMP_SRC_PATH} to {target_folder}.")
-        shutil.copy2(LIBOMP_SRC_PATH, target_folder)
+        
+   if op.exists(libomp_src):
+        print(f"Copying {libomp_src} to {target_folder}.")
+        shutil.copy2(libomp_src, target_folder)
         return True
 
-    print("WARNING: libomp.dll not found for ARM64 build.")
+    print(f"WARNING: libomp.dll not found for {arch_label} build at {libomp_src}.")
     return False
 
 
