@@ -72,7 +72,7 @@ def make_distributor_init_64_bits(
 
 
 def copy_libomp_dll(target_folder, wheel_dirname):
-   """Copy libomp.dll from LLVM to target folder for clang-cl builds."""
+    """Copy libomp.dll from LLVM to target folder for clang-cl builds."""
 
     cibw_build = os.environ.get("CIBW_BUILD", "").lower()
 
@@ -85,8 +85,8 @@ def copy_libomp_dll(target_folder, wheel_dirname):
     else:
         # Not a Windows clang-cl build — skip
         return False
-        
-   if op.exists(libomp_src):
+ 
+    if op.exists(libomp_src):
         print(f"Copying {libomp_src} to {target_folder}.")
         shutil.copy2(libomp_src, target_folder)
         return True
