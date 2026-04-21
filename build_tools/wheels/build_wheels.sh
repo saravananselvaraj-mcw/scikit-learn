@@ -59,8 +59,8 @@ if [[ "$RUNNER_OS" == "Windows" && "$CIBW_BUILD" == *"win_arm64"* ]]; then
     export CC=clang-cl
     export CXX=clang-cl
 
-    export CFLAGS="/O3 /arch:armv8.1 /clang:-funroll-loops"
-    export CXXFLAGS="/O3 /arch:armv8.1 /clang:-funroll-loops"
+    export CFLAGS="/O3 /arch:armv8.1 /clang:-march=armv8.2-a+dotprod+fp16 /clang:-funroll-loops /clang:-fno-math-errno /clang:-fno-trapping-math"
+    export CXXFLAGS="/O3 /arch:armv8.1 /clang:-march=armv8.2-a+dotprod+fp16 /clang:-funroll-loops /clang:-fno-math-errno /clang:-fno-trapping-math"
 
     CLANG_RT="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/ARM64/lib/clang/19/lib/windows"
     export LDFLAGS="$LDFLAGS -L\"$CLANG_RT\" -lclang_rt.builtins-aarch64"
